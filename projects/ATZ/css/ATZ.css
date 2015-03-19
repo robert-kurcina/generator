@@ -1,0 +1,255 @@
+/**
+ * NORMAL SIZE
+ **/
+.atz-tall .labels,
+.atz-wide .labels {
+	font-family: Verdana, Tahoma, Helvetica, Sans-Serif;
+	font-size: 11px;
+}
+
+/** 
+ * NORMAL icons
+ **/
+img.gender-boy {
+	position: absolute;
+	height: 16pt;
+	width: 32pt;
+	clip: rect(0px, 40px, 24px, 18px);
+	left: -12px;
+}
+
+img.gender-girl {
+	position: absolute;
+	height: 16pt;
+	width: 32pt;
+	clip: rect(0px, 18px, 24px, 0px);	
+}
+ 
+/**
+ * NORMAL TALL mode
+ * positions the various elements on the tall sample card
+ **/
+ 
+.atz-tall .fullname {
+	display: none;
+	visibility: hidden;
+	line-height: 0px;
+}
+
+.atz-tall .abbrname {
+	top: 10px;
+	left: 15px;	
+	width: 160px;
+	height: 27px;
+	font-size: 22px;
+	font-family: Crack Babies, Arial, Sans-serif;
+	overflow: hidden;
+}
+
+.atz-tall .type {
+	top: 12px;
+	left: 15px;	
+	width: 90px;
+	height: 20px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.atz-tall .gender {
+	top: -10px;
+	left: 80px;	
+	width: 22px;
+	height: 22px;
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+	text-align: center;
+}
+
+.atz-tall .quality {
+	top: -25px;
+	left: 110px;	
+	width: 80px;
+	height: 20px;
+	color: white;
+}
+
+.atz-tall .attributes {
+	top: -15px;
+	left: 15px;	
+	width: 200px;
+	height: 30px;
+	line-height: 12px;
+}
+
+.atz-tall .weapons {
+	top: 0px;
+	left: 20px;	
+	width: 200px;
+	height: 80px;
+	font-size: 9px;
+	padding-left: 1px;
+	line-height: 12px;
+}
+
+.atz-tall .notes {
+	top: 40px;
+	left: 20px;	
+	width: 200px;
+	height: 80px;
+	font-size: 9px;
+	padding-left: 1px;
+	line-height: 12px;
+}
+
+.atz-tall .rep {
+	top: -255px;
+	left: 188px;	
+	width: 40px;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+}
+
+/**
+ * NORMAL WIDE mode
+ * positions the various elements on the wide sample card
+ **/
+.atz-wide .fullname {
+	top: 10px;
+	left: 15px;	
+	width: 260px;
+	height: 27px;
+	font-size: 22px;
+	font-family: Crack Babies, Arial, Sans-serif;
+	overflow: hidden;
+}
+
+.atz-wide .abbrname {
+	display: none;
+	visibility: hidden;
+	line-height: 0px;
+}
+
+.atz-wide .type {
+	top: 13px;
+	left: 15px;	
+	width: 160px;
+	height: 20px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.atz-wide .gender {
+	top: -8px;
+	left: 175px;	
+	width: 16px;
+	height: 16px;
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+	text-align: center;	
+}
+
+.atz-wide .quality {
+	top: -20px;
+	left: 205px;	
+	width: 80px;
+	height: 20px;
+	color: white;
+}
+
+.atz-wide .attributes {
+	top: -5px;
+	left: 15px;	
+	width: 300px;
+	height: 30px;
+	line-height: 12px;
+}
+
+.atz-wide .weapons {
+	top: 10px;
+	left: 20px;	
+	width: 300px;
+	height: 80px;
+	font-size: 9px;
+	padding-left: 1px;
+	line-height: 12px;
+}
+
+.atz-wide .notes {
+	top: -15px;
+	left: 20px;	
+	width: 300px;
+	height: 50px;
+	font-size: 9px;
+	padding-left: 1px;
+	line-height: 12px;
+}
+
+.atz-wide .rep {
+	top: -220px;
+	left: 283px;	
+	width: 40px;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+}
+
+/**
+ * NORMAL IN-LINE Table presentation
+ **/
+.atz-wide table.small {
+	width: 295px;	
+}
+
+.atz-tall table.small {
+	width: 200px;	
+}
+
+.atz-tall .left-150 {
+	width: 100px;
+	overflow: hidden;	
+}
+ 
+table.small th {
+	font-size: 9px;
+	color: white;
+	padding: 2px;
+	padding-left: 5px;
+	border: 1px solid #333333;
+	background-color: #333333;
+	border-bottom: none;	
+}
+
+table.small td {
+	font-size: 9px;
+	padding: 2px;
+	border: 1px solid #cccccc;
+	border-top: none;
+}
+
+/**
+ * ROSTER presentation
+ **/
+.roster {
+	padding: 20px;	
+}
+
+.fatbottom {
+	margin-bottom: 10px;	
+}
+
+.character {
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid #dddddd;
+	background-color: #f3f3f3;
+}
+
+.genderDiv {
+	padding-top: 20px;
+	margin-left: 10px;
+}

@@ -1,0 +1,241 @@
+/**
+ * DEFAULT
+ * CSS definitions for all interfaces
+ **/
+
+*, body, td, p, div, span, li, a {
+	font-family: Verdana, Sans-serif;
+}
+
+body {
+	background-image: url(../img/gradient.vertical.ccccccc.ffffff.png);
+	background-repeat: repeat-x;
+	font-size: 75%;
+	min-width: 700px;
+}
+
+p {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+code, pre, tt, blockquote {
+	font-family: Courier, Serif;
+	color: #666666;
+	margin: 5px;
+	display: block;	
+}
+code, pre {
+	padding: 10px;
+	background-color: #e7e7e7;
+	border: 1px solid #cccccc;
+}
+
+textarea {
+	display: block;
+	padding: 5px;
+	width: 100%;
+	font-family: Courier, Serif;
+	color: #666666;
+}
+
+label {
+	font-weight: bold;
+	color: #666666;
+}
+
+table td {
+	vertical-align: top;
+}
+
+h1,h2,h3,h4,h5,h6 { clear: both; }
+a:link,
+a:active,
+a:visited {
+	color: #333333;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: #ff0000;
+	text-decoration: none !important;
+}
+
+.veryWideText {
+	width: 400px;
+}
+
+.wideText {
+	width: 250px;
+}
+
+.standardText {
+	width: 150px;
+}
+
+.narrowText {
+	width: 100px;
+}
+
+.shortText {
+	width: 50px;
+}
+
+.tinyText {
+	width: 25px;
+}
+
+.info {
+	padding: 20px;
+	border: 1px solid #cccccc;
+	border-top: 1px solid red;
+	margin: 10px;
+	background-image: url(../img/gradient.vertical.eeeeee.ffffff.png);
+	background-repeat: repeat-x;	
+}
+
+.links {
+	padding: 10px;
+	border: 1px solid #cccccc;
+	margin: 10px;
+	margin-top: 0px;
+	background-image: url(../img/gradient.vertical.eeeeee.ffffff.png);
+	background-repeat: repeat-x;	
+}
+
+.controls {
+	padding: 10px;
+	background-color: #eeeeee;
+	border: 1px solid #cccccc;
+	font-size: 10px;
+	color: #cccccc;
+}
+
+.controls a {
+	text-decoration: none;
+}
+
+.header {
+	margin-bottom: 10px;
+	color: #666666;
+}
+
+.dynamic-table {
+	min-width: 300px;
+	width: 100%;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+.dynamic-table caption {
+	padding: 5px;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #000000;
+}
+
+.dynamic-table th {
+	font-weight: bold;
+	background-color: #dddddd;
+	border: 1px solid #dddddd;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.dynamic-table td {
+	border: 1px solid #dddddd;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.left-150 {
+	text-align: left;
+	width: 150px;	
+}
+
+.center-20 {
+	text-align: center;
+	width: 20px;	
+}
+
+.center-80 {
+	text-align: center;
+	width: 80px;	
+}
+
+.center {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.exampleText {
+	color: #999999;
+	font-size: 12px;
+}
+
+.lefthand {
+	float: left;
+}
+
+.righthand {
+	float: right;
+}
+
+.hidden {
+	display: none;
+	visibility: hidden;
+}
+
+.hidden,
+.clearAll {
+	line-height: 0;
+	float: none;
+	clear: all;
+}
+
+.screen-padded {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+}
+
+.padded-bordered {
+	padding: 20px;
+	border: 1px solid #cccccc;
+	margin-bottom: 3px;
+}
+
+.warning {
+	padding: 5px;
+	margin: 3px;
+	display: block;
+	font-size: 11px;
+	color: #000000;
+	background-color: #ffeeee;
+	border: 1px solid #ffcccc;
+	border-top: 1px solid #ff0000;
+}
+
+/**
+ * README MODAL dialog
+ */
+#readmeArea {
+	font-size: 75%;	
+}
+
+#readmeArea h1 { font-size: 1.6em; }
+#readmeArea h2 { font-size: 1.3em; }
+#readmeArea h3 { font-size: 1.0em; }
+
+/**
+ * MODIFY jquery.ui.buttons
+ */
+.ui-state-hover { color: #ff0000 !important; }
+
+

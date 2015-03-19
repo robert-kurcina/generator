@@ -1,0 +1,27 @@
+/**
+ * ASSUME use of 
+ * <LINK REL="stylesheet" HREF="print.css" type="text/css" media="print">
+ *
+ * And within the code, generate delineators like so:
+ * <div class='page-break'></div>
+ **/
+ 
+body { 
+	background-color: #ffffff;
+	background: none;
+}
+
+.page-break {
+	display: block;
+	page-break-after: always !important;	
+}
+
+.screen {
+	display: none;
+	visibility: hidden;
+	line-height: 0;	
+}
+
+.screen-padded {
+	padding: 0px;
+}

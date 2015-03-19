@@ -1,0 +1,16 @@
+=== GENERATOR ===
+<i>A framework for creating dynamic content for table-top gaming using javascript
+(c) 2009 Robert Kurcina</i>
+
+== LIBRARIES ==
+	- jQuery Copyright (c) 2009 John Resig 1.3.2 MIT http://jquery.com/
+	- DateFormatter v.0.0.1 http://clonedoppelganger.net/
+	- sprintf http://www.webtoolkit.info/
+	- JSON2 2008-09-01 http://www.JSON.org/json2.js
+	- jsDraw2D BETA http://jsdraw2d.jsfiction.com
+	- jquery.xml2json version 1.0 http://www.fyneworks.com/
+	- jquery.fade http://plugins.jquery.com/project/fade
+	- disabletextselect 1.0 http://www.jdempster.com/category/jquery/disabletextselect/
+	- jquery.buttons http://www.filamentgroup.com/
+	- jStore Delegate Framework Copyright (c) 2009 Eric Garside (http://eric.garside.name)
+	- jQuery UI 1.7.2 Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)

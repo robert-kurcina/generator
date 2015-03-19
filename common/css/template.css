@@ -1,0 +1,87 @@
+/**
+ * TEMPLATE
+ * fixes the dimensions of a card in both the tall and wide templates.
+ **/
+.template {
+	border: none;
+	border-collapse: collapse;
+}
+
+.card-wide img.card {
+	position: relative;
+	z-index: 0;
+}
+
+.card-tall img.card {
+	position: relative;
+	z-index: 0;
+}
+
+.card-wide .labels {
+	position: relative;
+	z-index: 1;
+	top: -181pt;
+}
+
+.card-tall .labels {
+	position: relative;
+	z-index: 1;
+	top: -252pt;
+}
+
+.card-wide .labels div,
+.card-tall .labels div {
+	position: relative;
+}
+
+.card-wide,
+.card-wide img.card,
+.card-wide .labels {
+	height: 181pt;
+	width: 252pt;
+	overflow: hidden;
+}
+
+.card-tall,
+.card-tall img.card,
+.card-tall .labels {
+	width: 181pt;
+	height: 252pt;
+	overflow: hidden;
+}
+
+/**
+ * DOUBLE size for when zoomed in for editing
+ **/
+.double .card-wide .labels {
+	position: relative;
+	z-index: 1;
+	top: -362pt;
+}
+
+.double .card-tall .labels {
+	position: relative;
+	z-index: 1;
+	top: -504pt;
+}
+
+.double .card-wide .labels div,
+.double .card-tall .labels div {
+	position: relative;
+}
+
+.double .card-wide,
+.double .card-wide img.card,
+.double .card-wide .labels {
+	height: 362pt;
+	width: 504pt;
+	overflow: hidden;
+}
+
+.double .card-tall,
+.double .card-tall img.card,
+.double .card-tall .labels {
+	width: 362pt;
+	height: 504pt;
+	overflow: hidden;
+}

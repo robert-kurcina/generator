@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>All Things Zombie :: Demo - Armory Info</title>		
+		<link rel="stylesheet" type="text/css" href="../../../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../../../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="../../../common/css/template.css">		
+		<link rel="stylesheet" type="text/css" href="../../../common/css/printer.css" media="print">
+		<link rel="stylesheet" type="text/css" href="../../../common/js/plugins/jquery.ui/css/smoothness/jquery-ui-1.7.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.css"/>
+		
+		<script type="text/javascript" src="../../../common/js/main/jquery.js"></script>
+		<script type="text/javascript" src="../../../common/js/plugins/jquery.ui/js/jquery-ui-1.7.2.custom.min.js"></script>	
+		<script type="text/javascript" src="../../../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.js"></script>	
+		<script type="text/javascript" src="../../../common/js/lib/jquery.fade.js"></script>	
+		
+		<script type="text/javascript" src="../../../common/js/modules/Modal.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Dice.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Utilities.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Table.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Template.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/NameGenerator.js"></script>
+		
+		<link rel="stylesheet" href="../css/ATZ.css" type="text/css">		
+		<script type="text/javascript" src="../js/Armory.js"></script>
+		<script>		
+			var getInfo = function (name){
+				var resultObj = Armory.getInfo(name);
+
+				Modal.display('modalArea', resultObj.toString(), name);
+			}
+			
+			var getCustomInfo = function (){
+				var weaponName = $("#name").val();
+				var resultObj = Armory.getInfo(weaponName);
+				
+				Modal.display('modalArea', resultObj.toString(), weaponName);
+			}
+			
+			var getAllInfo = function (){
+				var resultObj = Armory.getAllInfo();
+				var descriptorObj = { 'label': 'Weapon Name', 'range': 'Range', 'targets': 'Targets', 'outgunned': 'Out-gunned', 'impact': 'Impact', 'tableCaption': 'Armory Information', 'headClasses': { 'label': 'left-150'}, 'bodyClasses': { 'label': 'left-150', 'default': 'center'}}
+				var outputHtml = Table.getTable(resultObj, descriptorObj);
+				
+				Modal.display('modalArea', outputHtml, 'Armory Information');
+			}
+
+		</script>
+	</head>	
+	<body>
+		<a name="top"></a>
+		<div class="info">
+			<h1>Armory Generation</h1>
+			<p>The Armory.js module provides information for a known weapon.  The syntax is as follows:
+				<code>
+					Armory.getInfo(n); //retrieve the weapon stats for weapon n
+					<br/>Armory.getAllInfo(); //retrieve the ArmoryInfo data for custom presentation
+				</code>
+				<br/><input type='button' onclick='getInfo("Bazooka");' value='Get "Bazooka" information' title='using Armory.getInfo("Bazooka");'/>
+				<br/>
+				<br/><input type='text' id='name'><input type='button' onclick='getCustomInfo();' value='Get Custom Info' title='using Armory.getInfo(name);'/>
+				<br/><span class='exampleText'>Enter a weapon name like 'Bazooka' or 'Fists' or 'Bolt-action Rifle'</span>
+				<br/>
+				<br/><input type='button' onclick='getAllInfo();' value='Click to show all Armory info' title='using Armory.getAllInfo();'/>
+			</p>
+			<br/>
+		</div>
+		<a name="bottom"></a>
+		<div class="links">
+			Back to <a href='../index.html' title='Click to go to ATZ main directory'>All Things Zombie</a> index.
+			<br/>Back to <a href='../../../index.html' title='Click to go to project main directory'>Home</a> page.
+		</div>
+		<div id='modalArea'></div>
+	</body>
+</html>

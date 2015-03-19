@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>All Things Zombie :: Final - Roster</title>
+		<link rel="stylesheet" type="text/css" href="../../../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../../../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="../../../common/css/template.css">		
+		<link rel="stylesheet" type="text/css" href="../../../common/css/printer.css" media="print">
+		<link rel="stylesheet" type="text/css" href="../../../common/js/plugins/jquery.ui/css/smoothness/jquery-ui-1.7.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.css"/>
+		
+		<script type="text/javascript" src="../../../common/js/main/jquery.js"></script>
+		<script type="text/javascript" src="../../../common/js/plugins/jquery.ui/js/jquery-ui-1.7.2.custom.min.js"></script>	
+		<script type="text/javascript" src="../../../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.js"></script>	
+		<script type="text/javascript" src="../../../common/js/lib/jquery.fade.js"></script>	
+		
+		<script type="text/javascript" src="../../../common/js/modules/Modal.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Dice.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Utilities.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Table.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/Template.js"></script>
+		<script type="text/javascript" src="../../../common/js/modules/NameGenerator.js"></script>	
+		
+		<link rel="stylesheet" href="../css/ATZ.css" type="text/css">
+		<link rel="stylesheet" href="../css/ATZ.double.css" type="text/css">			
+		<script type="text/javascript" src="../js/Civilian.js"></script>
+		<script type="text/javascript" src="../js/Police.js"></script>
+		<script type="text/javascript" src="../js/Ganger.js"></script>
+		<script type="text/javascript" src="../js/Survivor.js"></script>
+		<script type="text/javascript" src="../js/Military.js"></script>
+		<script type="text/javascript" src="../js/Armory.js"></script>
+		<script type="text/javascript" src="../js/Attributes.js"></script>
+		<script type="text/javascript" src="../js/Character.js"></script>
+		<script type="text/javascript" src="../js/Team.js"></script>
+		<script type="text/javascript" src="../js/Cardsheet.js"></script>
+		<script type="text/javascript" src="../js/Roster.js"></script>
+		<script> 
+			var generate = function (){
+				var definitionStrID = 'definition'; 
+				var cardCountID = 'cardcount';
+				var bUseTallID = 'tall';
+				var outputAreaID = 'outputArea';
+				
+				Roster.generate(definitionStrID, cardCountID, bUseTallID, outputAreaID);
+			}
+			
+			var getSheet = function (cardIndex){
+				var cardCountID = 'cardcount';
+				var bUseTallID = 'tall';
+				var outputAreaID = 'outputArea';
+				
+				Roster.getSheet(cardIndex, cardCountID, bUseTallID, outputAreaID);
+			}
+		</script>
+	</head>	
+	<body>
+		<a name="top"></a>
+		<div class='screen'>
+			<div class='info'>
+				<h1>ATZ :: Roster Generation</h1>
+				<p>
+					This page generates a sample card sheet using an input field.  Each card generated can be edited by double-clicking on it; a double-sized version
+					will appear in a modal window.  Fields that can be edited will highlight; click into a field to modify its values. To generate a cardsheet, enter one or
+					more defintions in the field below.  Here are some examples:
+					<pre>
+6                          //Generate 6 random characters
+1xMilitary                 //Generate 1 Military character
+*xPolice                   //Generate a Star Police character
+2xSurvivor-F               //Generate 2 Survivor characters - all Female
+4xCivilian-?               //Generate 4 Civilian characters - up to half are Female
+1xGanger, 2xMilitary       //Generate 1 Ganger and 2 Military characters
+					</pre>
+					<p class='warning'>
+						Opera and Internet Explorer users will need to set 'cards per page' to '6'.
+						All printing should go view print-preview; set printer margins to 0.25 inch or 1 CM where possible.  Remove 'Shrink to Page'; cards are 2.5"x3.5".
+						Do not print headers, footers, or other meta data on page.  To save the image for later, select the printer as 'Adobe PDF' if Acrobat is installed.
+					</p>
+					<p class='warning'>
+						To properly view the generated cards, the "Lots of Dead Crack Babies" font will need to be installed into your system's "Fonts" folder.  On Windows,
+						this is located at C:\WINDOWS\Fonts.  Download the font from <a href="../fonts/NEWCRACK.TTF" title="Click to download the 'Lots of Dead Crack Babies' font">here</a>
+					</p>
+					<br/><input id='definition' type='text' class='wideText' value='18' class='wideText' title="Enter something like '6', or '3xCivilian, 3xGanger', etc"/>
+					<input type='button' onclick='generate();' value='Click to generate a card sheet' title='using Roster.generate(defStr);'>
+					<br/><span class='exampleText'>Enter something like '6', '1xMilitary', '*xPolice' or ' 1xSurvivor, 2xCivilian-F, 1xGanger-?', etc</span>
+					<br/>
+					<br/><input id='cardcount' type='text' class='shortText' value='9' maxlength='2' title='Enter the number of cards to appear on each page'>&nbsp;Cards per page
+					&nbsp;<input type='checkbox' value='true' id='tall' title='create cardsheet using tall cards'>&nbsp;Tall
+					<br/><span class='exampleText'>Typically 9 cards per letter-sized page, 10 per legal-sized page</span>
+					<br/>
+					<br/><input type='button' onclick='getSheet("default");' value='Click to get sheet of blank cards' title='Click to grab a sheet of default cards'/>
+					<input type='button' onclick='getSheet("backs");' value='Click to get sheet of card-backs' title='Click to grab a sheet of card backs cards'/>
+				</p>
+			</div>
+		</div>		
+		<div class='screen'>
+			<div class="links">
+				Back to <a href='../index.html' title='Click to go to ATZ main directory'>All Things Zombie</a> index.
+				<br/>Back to <a href='../../../index.html' title='Click to go to project main directory'>Home</a> page.
+			</div>
+		</div>
+		<div class='screen-padded'>
+			<div id='outputArea'></div>
+			<div id='modalArea'></div>
+			<div id='editableFieldArea'></div>
+		</div>
+		<a name="bottom"></a>
+	</body>
+</html>

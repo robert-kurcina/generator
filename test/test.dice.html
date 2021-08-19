@@ -1,1 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>TEST :: Dice Roller</title>		
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/template.css">		
+		<link rel="stylesheet" type="text/css" href="../common/css/printer.css" media="print">
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui/css/smoothness/jquery-ui-1.7.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.css"/>
+		
+		<script type="text/javascript" src="../common/js/main/jquery.js"></script>
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui/js/jquery-ui-1.7.2.custom.min.js"></script>	
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.js"></script>	
+		<script type="text/javascript" src="../common/js/lib/jquery.fade.js"></script>
+		
+		<script type="text/javascript" src="../common/js/modules/Modal.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Dice.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Utilities.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Table.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Template.js"></script>
+		<script type="text/javascript" src="../common/js/modules/NameGenerator.js"></script>
+		<script>
+		
+			var testDieRoll = function (){
+				var resultObj = Dice.rollDie(6);
+				var outputStr = resultObj.score + "";
+				
+				Modal.display('modalArea', outputStr, "rollDie");
+			}
+			
+			var testDiceRoll = function (){
+				var resultObj = Dice.rollDice(2,6);
+				var outputStr = resultObj.score + "";
+				
+				Modal.display('modalArea', outputStr, "rollDice");
+			}
+			
+			var testDiceScores = function (){
+				var resultObj = Dice.rollDice(3,6);
+				var outputStr = resultObj.scores + "";
+				
+				Modal.display('modalArea', outputStr, "rollDice(3,6)");
+			}
+			
+			var testSingleMetrics = function (){
+				var resultObj = Dice.rollDice(2,6);
+				var outputStr = "<b>SCORES:</b> " + resultObj.scores + "<br/><b>SUCCESSES</b> (3 or less) scored: " + resultObj.equalOrLess(3);
+				
+				Modal.display('modalArea', outputStr, "rollDice(2,6).equalOrLess(3)");
+			}
+			
+			var testDiceDisclosure = function (){
+				var resultObj = Dice.rollDice(4,6);
+				var outputStr = resultObj.compare();
+				
+				Modal.display('modalArea', outputStr, "rollDice(4,6).compare()");
+			}
+			
+			var testMetricsDisclosure = function (){
+				var resultObj = Dice.rollDice(10,6);
+				var outputStr = resultObj.toString() + "<br/>" + resultObj.compare(4);
+				
+				Modal.display('modalArea', outputStr, "rollDice(10,6).compare(4)");
+			}
+			
+			var testDiceNotation = function (){
+				var resultObj = Dice.rollDice("4D10");
+				var outputStr = Utilities.wikify(resultObj.toString());
+				
+				Modal.display('modalArea', outputStr, "rollDice('4D10')");
+			}
+			
+			var testOpenDiceNotation = function (){
+				var givenStr = $('#notation').val();
+				var resultObj = Dice.rollDice(givenStr);
+				var outputStr = Utilities.wikify(resultObj.compare()) + "<br/>" + resultObj.toString();
+				
+				Modal.display('modalArea', outputStr, "Custom Dice " + givenStr);
+			}
 
+		</script>
+	</head>	
+	<body>
+		<a name="top"></a>
+		<div class="info">
+			<h1>Dice Roller</h1>
+			<p>The Dice.js module provides the attribute to specify how many dice (n), the number of sides (s), and the total adds (a), and per die modifier (m).  The syntax to call dice is:
+				<br/>
+				<code>
+					Dice.rollDice(n,s,a,m);
+					<br/>Dice.rollDice(3,6); //rolls 3 six-sided dice
+					<br/>Dice.rollDice(4,8,2); //rolls 4 eight-sided dice and add 2 to the total
+				</code>
+				<br/>However, dice may also be called via either of these forms:
+				<code>
+					Dice.rollDie(); //rolls a single six-sided die
+					<br/>Dice.rollDice(); //rolls two six-sided dice and sums them
+					<br/>Dice.rollDice("2D6+3"); //rolls two six-sided dice and add 3 to the total
+				</code>
+				<br/>Dice roll statistics may also be gathered by accessing one or more result object members as follows:
+				<code>
+					Dice.rollDice(6,6).score; //retrieve the list of dice rolls for 6D6
+					<br/>Dice.rollDice(3,10).equalOrGreater(4); //retrieve the number of dice scores for 3D10 greater or equal to 4
+				 </code>
+				<br/><input type='button' onclick='testDieRoll();' value='Roll a die' title='using Dice.rollDie();'/>
+				<br/><input type='button' onclick='testDiceRoll();' value='Roll two dice and add them' title ='using Dice.rollDice();'/>
+				<br/><input type='button' onclick='testDiceScores();' value='Roll three dice and show the scores' title='using Dice.rollDice(3,6).scores;'/>
+				<br/><input type='button' onclick='testSingleMetrics();' value='Roll two dice and check successes' title='using Dice.rollDice().equalOrLess(3);'/>
+				<br/><input type='button' onclick='testDiceDisclosure();' value='Roll 4 dice and show what that did' title='using Dice.rollDice(4,6).toString();'/>
+				<br/><input type='button' onclick='testMetricsDisclosure();' value='Roll 10 dice and get their sum, and compare stats against the value of "4"' title='using Dice.rollDice(10,6).compare(4);'/>
+				<br/><input type='button' onclick='testDiceNotation();' value='Roll 4D10 by definition string' title='using Dice.rollDice("4D10");'/>
+				<br/>
+				<br/><input type='text' id='notation'><input type='button' onclick='testOpenDiceNotation();' value='Roll user defined dice pattern' title='using Dice.rollDice(notation);'/>
+				<br/><span class='exampleText'>Enter dice notation like '2D6+2', '3D6:1', or '6D4-5:2'</span>
+				<br/>
+			</p>
+		</div>
+		<a name="bottom"></a>
+		<div class="links">
+			Back to <a href='../index.html' title='Click to go to Home directory'>Home</a> page.
+		</div>
+		<div id='modalArea'></div>
+	</body>
+</html>

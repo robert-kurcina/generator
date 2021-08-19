@@ -1,0 +1,75 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>TEST :: Dynamic Table Generation</title>		
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/template.css">		
+		<link rel="stylesheet" type="text/css" href="../common/css/printer.css" media="print">
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui/css/smoothness/jquery-ui-1.7.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.css"/>
+		
+		<script type="text/javascript" src="../common/js/main/jquery.js"></script>
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui/js/jquery-ui-1.7.2.custom.min.js"></script>	
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.js"></script>	
+		<script type="text/javascript" src="../common/js/lib/jquery.fade.js"></script>
+		
+		<script type="text/javascript" src="../common/js/modules/Modal.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Dice.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Utilities.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Table.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Template.js"></script>
+		<script type="text/javascript" src="../common/js/modules/NameGenerator.js"></script>
+		<script>		
+			
+			var getSampleTableInfo = function (){
+				var tableInfo = {
+					'Unarmed': { 'label': 'Unarmed', 'range': '-', 'targets': '1', 'impact': 1, 'outgunned': 0 },
+					'Fists': { 'label': 'Fists', 'range': '-', 'targets': '1', 'impact': 1, 'outgunned': 0 },
+					'Imp 1H weapon': { 'label': 'Imp 1H weapon', 'range': '-', 'targets': '1', 'impact': 1, 'outgunned': 0 },
+					'Imp 2H weapon': { 'label': 'Imp 2H weapon', 'range': '-', 'targets': '1', 'impact': 2, 'outgunned': 0 },
+					'Edge Weapon': { 'label': 'Edge Weapon', 'range': '-', 'targets': '1', 'impact': 2, 'outgunned': 0 },
+					'Assault Rifle': { 'label': 'Assault Rifle', 'range': 48, 'targets': '1 or 3', 'impact': 3, 'outgunned': 3 },
+					'BA Pistol': { 'label': 'BA Pistol', 'range': 12, 'targets': '1 or 2', 'impact': 2, 'outgunned': 2 },
+					'Bolt Action Rifle': { 'label': 'Bolt Action Rifle', 'range': 12, 'targets': '1', 'impact': 3, 'outgunned': 3 },
+					'Flash Bang Grenades': { 'label': 'Flash Bang Grenade', 'range': 6, 'targets': '12\" blast', 'impact': '-', 'outgunned': 5 },
+					'Machine Pistol': { 'label': 'Machine Pistol', 'range': 12, 'targets': '3', 'impact': 1, 'outgunned': 3 },
+					'Pistol': { 'label': 'Pistol', 'range': 12, 'targets': '1 or 2', 'impact': 1, 'outgunned': 1 },
+					'Semi-Automatic Rifle': { 'label': 'Semi-Automatic Rifle', 'range': 48, 'targets': '1 or 2', 'impact': 3, 'outgunned': 3 },
+					'Shotgun': { 'label': 'Shotgun', 'range': 12, 'targets': '3', 'impact': 2, 'outgunned': 3 },
+					'SAW': { 'label': 'SAW', 'range': 48, 'targets': '4', 'impact': 3, 'outgunned': 4 },
+					'Submachine Gun': { 'label': 'Submachine Gun', 'range': 24, 'targets': '3', 'impact': 1, 'outgunned': 3 },
+					'Bazooka': { 'label': 'Bazooka', 'range': 48, 'targets': '6\" blast', 'impact': 3, 'outgunned': 5 }
+				};
+				
+							
+				var descriptorObj = { 'label': 'Weapon Name', 'range': 'Range', 'targets': 'Targets', 'outgunned': 'Out-gunned', 'impact': 'Impact', 'tableCaption': 'Armory Information', 'headClasses': { 'label': 'left-150'}, 'bodyClasses': { 'label': 'left-150', 'default': 'center'}}
+				var outputHtml = Table.getTable(tableInfo, descriptorObj);
+				
+				Modal.display('modalArea', outputHtml, 'Sample Table');
+			}				
+		</script>
+	</head>	
+	<body>
+		<a name="top"></a>
+		<div class="info">
+			<h1>Dynamic Table Generation</h1>
+			<p>The Table.js module will create an HTML table wrapping any list object passed in.  The syntax is as follows:
+				<code>
+					Table.getTable(d); //retrieve an HTML wrapping contents of list object d
+					<br/>Table.getTable(d,n); //retrieve an HTML wrapping contents of list object d as described by descriptor object n
+					<br/>Table.getVerboseTable(d); //same as Table.getTable(d) but will show index column
+					<br/>Table.getVerboseTable(d,n); //same as Table.getTable(d,n) but will show index column
+				</code>
+				<br/><input type='button' onclick='getSampleTableInfo();' value='Click to show all Armory info' title='using Table.getTable(d);'/>			
+			</p>
+			<br/>
+			<div id='outputArea'></div>
+		</div>
+		<a name="bottom"></a>
+		<div class="links">
+			Back to <a href='../index.html' title='Click to go to Home directory'>Home</a> page.
+		</div>
+		<div id='modalArea'></div>
+	</body>
+</html>

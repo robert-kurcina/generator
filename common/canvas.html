@@ -1,0 +1,915 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>WIP :: jsDraw2D Map Generator</title>		
+		<link rel="stylesheet" type="text/css" href="../common/css/reset.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/default.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/template.css">		
+		<link rel="stylesheet" type="text/css" href="../common/css/printer.css" media="print">
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui/css/smoothness/jquery-ui-1.7.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.css"/>
+		
+		<script type="text/javascript" src="../common/js/main/jquery.js"></script>
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui/js/jquery-ui-1.7.2.custom.min.js"></script>	
+		<script type="text/javascript" src="../common/js/plugins/jquery.ui.buttons/jquery.ui.buttons.js"></script>	
+		<script type="text/javascript" src="../common/js/lib/jquery.fade.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery.disable.text.select.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jsDraw2D_Uncompressed.js"></script>			
+		
+		<script type="text/javascript" src="../common/js/modules/Modal.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Dice.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Utilities.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Table.js"></script>
+		<script type="text/javascript" src="../common/js/modules/Template.js"></script>
+		<script type="text/javascript" src="../common/js/modules/NameGenerator.js"></script>
+		<script>
+			var UNIT_DIVISIONS_X = 8;
+			var UNIT_DIVISIONS_Y = 8;
+			var UNIT_SIZE_PIXELS_X = 24;
+			var UNIT_SIZE_PIXELS_Y = 24;
+			var CANVAS_HEIGHT_PIXELS = UNIT_DIVISIONS_Y * UNIT_SIZE_PIXELS_Y;
+			var CANVAS_WIDTH_PIXELS = UNIT_DIVISIONS_X * UNIT_SIZE_PIXELS_X;
+			var ROAD_WIDTH_PIXELS_MAJOR = 2;
+			var ROAD_WIDTH_PIXELS_MINOR = 1;
+			var DIVISIONS_SUBGRID = 6;
+			
+			var IMAGE_PATH = "../projects/ATZ/img/map/";
+			var IMAGE = {
+				'INTERSECTION_TWO_LANE': 'intersection.minor.png',
+				'INTERSECTION_FOUR_LANE': 'intersection.major.png',
+				'ROAD_TWO_LANE_VERTICAL': 'road.minor.vertical.png',
+				'ROAD_TWO_LANE_HORIZONTAL': 'road.minor.horizontal.png',
+				'ROAD_FOUR_LANE_VERTICAL': 'road.major.vertical.png',
+				'ROAD_FOUR_LANE_HORIZONTAL': 'road.major.horizontal.png'				
+			}
+			
+			var TERRAIN_TYPE_ANY = 'ANY';
+			var TERRAIN_TYPE_WOODS = 'wood';
+			var TERRAIN_TYPE_HILLS = 'hill';
+			var TERRAIN_TYPE_BUILDINGS = 'building';
+			var TERRAIN_TYPE_ROADS = 'road';
+			
+			var TERRAIN_BUILDINGS_LARGE = [
+				{ height: 3, width: 2 },
+				{ height: 2, width: 3 },
+				{ height: 2, width: 4 },
+				{ height: 4, width: 2 },
+				{ height: 3, width: 2 },
+				{ height: 2, width: 3 },
+				{ height: 2, width: 3 },
+				{ height: 3, width: 3 },
+				{ height: 4, width: 3 },
+				{ height: 3, width: 4 }
+			];			
+			
+			var TERRAIN_BUILDINGS_MEDIUM = [
+				{ height: 1, width: 3 },
+				{ height: 1, width: 3 },
+				{ height: 1, width: 3 },
+				{ height: 3, width: 1 },
+				{ height: 3, width: 1 },
+				{ height: 3, width: 1 },
+				{ height: 1, width: 4 },
+				{ height: 4, width: 1 },
+				{ height: 2, width: 3 },
+				{ height: 3, width: 2 }
+			];
+			
+			var TERRAIN_BUILDINGS_SMALL = [
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 1, width: 1 },
+				{ height: 2, width: 2 },
+				{ height: 1, width: 2 },
+				{ height: 2, width: 1 }	
+			];
+			
+			var TERRAIN_WOODS = [
+				{ height: 1, width: 1 },			
+				{ height: 1, width: 2 },
+				{ height: 2, width: 1 }
+			];
+			
+			var TERRAIN_HILLS = [
+				{ height: 1, width: 1 },			
+				{ height: 1, width: 2 },
+				{ height: 2, width: 2 },
+				{ height: 2, width: 1 }
+			];
+			
+			var initCells = function (){
+				var cells = [];	
+			
+				for (var r = 0; r < UNIT_DIVISIONS_Y; r++){
+					var row = [];
+					
+					for	(var c = 0; c < UNIT_DIVISIONS_X; c++){
+						row.push(0);	
+					}
+					
+					cells.push(row);
+				}
+				
+				return cells;
+			}
+			
+			var initDensityObject = function (){
+				var tempObj = {
+					'totalArea': UNIT_DIVISIONS_X * UNIT_DIVISIONS_Y,
+					'woods': 0,
+					'hills': 0,
+					'buildings': 0,
+					'roads': 0					
+				};	
+			}
+			
+			var setPreferences = function (cellsWide, cellsTall, pixelsWide, pixelsTall, minorRoadWidth, majorRoadWidth, subgrid){
+				UNIT_DIVISIONS_X = 1 * cellsWide || 8;
+				UNIT_DIVISIONS_Y = 1 * cellsTall || 8;
+				UNIT_SIZE_PIXELS_X = 1 * pixelsWide || 25;
+				UNIT_SIZE_PIXELS_Y = 1 * pixelsTall || 25;
+				ROAD_WIDTH_PIXELS_MAJOR = 1 * majorRoadWidth || 2;
+				ROAD_WIDTH_PIXELS_MINOR = 1 * minorRoadWidth || 1;
+				
+				CANVAS_HEIGHT_PIXELS = UNIT_DIVISIONS_Y * UNIT_SIZE_PIXELS_Y;
+				CANVAS_WIDTH_PIXELS = UNIT_DIVISIONS_X * UNIT_SIZE_PIXELS_X;
+				
+				DIVISIONS_SUBGRID = 1 * (subgrid || 6);
+			}
+			
+			var getContext = function (canvasID){
+				var canvasDiv = $("#" + canvasID)[0];
+				var ctx = new jsGraphics(canvasDiv);
+								
+				return ctx;
+			}			
+			
+			var drawGrid = function (ctx, artDepth){
+				if (!ctx){ return; }
+				
+				ctx.openContainer('grid', 'subgrid-' + artDepth);
+				var subgridColor = new jsColor("#aaaaaa");
+				var subgridPen = new jsPen(subgridColor, 1);				
+				var subgridSizeX = Math.floor(UNIT_SIZE_PIXELS_X/(DIVISIONS_SUBGRID));
+				var subgridSizeY = Math.floor(UNIT_SIZE_PIXELS_Y/(DIVISIONS_SUBGRID));
+				
+				for (var i = 0; i < DIVISIONS_SUBGRID * (1 + UNIT_DIVISIONS_Y); i++){
+					var point1 = new jsPoint(0, i * subgridSizeY);
+  					var point2 = new jsPoint(CANVAS_WIDTH_PIXELS, i * subgridSizeY);
+  					
+					ctx.drawLine(subgridPen, point1, point2);
+				}
+				
+				for (var i = 0; i < DIVISIONS_SUBGRID * (1 + UNIT_DIVISIONS_X); i++){
+  					var point1 = new jsPoint(i * subgridSizeX, 0);
+  					var point2 = new jsPoint(i * subgridSizeX, CANVAS_HEIGHT_PIXELS);
+  					
+  					ctx.drawLine(subgridPen, point1, point2);
+				}
+				ctx.closeContainer();
+				
+				ctx.openContainer('grid', 'maingrid-' + artDepth);
+				var color = new jsColor("#666666");				
+				var pen = new jsPen(color, 1);	
+				
+				for (var i = 0; i < UNIT_DIVISIONS_Y; i++){
+					var point1 = new jsPoint(0, i * UNIT_SIZE_PIXELS_Y);
+  					var point2 = new jsPoint(CANVAS_WIDTH_PIXELS, i * UNIT_SIZE_PIXELS_Y);
+  					
+					ctx.drawLine(pen, point1, point2);
+				}
+				
+				for (var i = 0; i < UNIT_DIVISIONS_X; i++){
+  					var point1 = new jsPoint(i * UNIT_SIZE_PIXELS_X, 0);
+  					var point2 = new jsPoint(i * UNIT_SIZE_PIXELS_X, CANVAS_HEIGHT_PIXELS);
+  					
+  					ctx.drawLine(pen, point1, point2);
+				}				
+				ctx.closeContainer();
+				
+				showHideSubgrid();
+			}
+			
+			var getRandomRoad = function (){
+				var found = false;
+				
+				while (!found){
+					var east = Math.random() < 0.5 ? true : false;
+					var west = Math.random() < 0.5 ? true : false;
+					var north = Math.random() < 0.5 ? true : false;
+					var south = Math.random() < 0.5 ? true : false;					
+					var minorRoad = Math.random() < 0.5 ? true : false;
+					
+					found = east || west || north || south;
+					
+					if (found){ found = (north || south) && Math.random() < 0.5 ? true : false; }
+				}
+				
+				var roadObj = {
+					'east': east,
+					'north': north,
+					'west': west,
+					'south': south,
+					'minorRoad': minorRoad					
+				}
+				
+				return roadObj;
+			}
+			
+			var resizeCanvas = function (canvasID){
+				$("#" + canvasID).attr("width", CANVAS_WIDTH_PIXELS);
+				$("#" + canvasID).attr("height", CANVAS_HEIGHT_PIXELS);
+				$("#" + canvasID).css("width", CANVAS_WIDTH_PIXELS);
+				$("#" + canvasID).css("height", CANVAS_HEIGHT_PIXELS);
+				$("#" + canvasID).parent().attr("height", CANVAS_HEIGHT_PIXELS + 2);
+				$("#" + canvasID).parent().attr("width", CANVAS_WIDTH_PIXELS + 2);
+				$("#" + canvasID).parent().css("height", CANVAS_HEIGHT_PIXELS + 2);
+				$("#" + canvasID).parent().css("width", CANVAS_WIDTH_PIXELS + 2);
+			}
+			
+			var placeMarker = function (mapObj, cellX, cellY){
+				var ctx = mapObj.ctx;
+				var markerArr = mapObj.markerArr;
+				var found = -1;
+				
+				for (var i = 0; i < markerArr.length; i++){
+					var markerObj = markerArr[i];
+					var x = markerObj.cellX;
+					var y = markerObj.cellY;
+					
+					if (cellX == x && cellY == y){ found = i; break; }
+				}
+				
+				if (found == -1){
+					var markerObj = drawMarker(ctx, cellX, cellY, markerArr.length);
+					
+					markerArr.push(markerObj);
+				}
+				else {
+					var markerObj = markerArr[i];
+					var textDiv = markerObj.textDiv;
+					
+					$('.marker').remove();
+					markerArr.splice(found, 1);	
+					redrawAllMarkers(ctx, markerArr);
+				}				
+			}
+			
+			var redrawAllMarkers = function(ctx, markerArr){
+				var tempArr = [];
+				
+				for (var i = 0; i < markerArr.length; i++){
+					var markerObj = markerArr[i];
+					var cellX = markerObj.cellX;
+					var cellY = markerObj.cellY;
+					var tempObj = drawMarker(ctx, cellX, cellY, i);
+					
+					tempArr.push(tempObj);
+				}
+				
+				markerArr = tempArr;
+			}
+				
+			var drawMap = function (canvasID, givenSpecs){
+				var ctx = getContext(canvasID);
+				if (!ctx){ return; }
+				
+				setPreferences($('#cellsWide').val(), $('#cellsTall').val(),$('#pixelsWide').val(),$('#pixelsTall').val(),$('#minorRoadWidth').val(),$('#majorRoadWidth').val(),$('#subgridSize').val());	
+				
+				var defaultSpecs = {
+					'large': 1,
+					'medium': 3,
+					'small': 8,
+					'woods': 2,
+					'hills': 0,
+					'road': {
+							'east': Math.random() < 0.5,
+							'north': Math.random() < 0.5,
+							'west': Math.random() < 0.5,
+							'south': Math.random() < 0.5,
+							'minorRoad': Math.random() < 0.5,		
+						},
+					'density': 0.5			
+				};
+				
+				var mapObj = {
+					'ctx': ctx,
+					'canvasID': canvasID,
+					'markerArr': []
+				};
+				
+				var elementsArr = [];
+				var cellsArr = initCells();
+				var specsObj = givenSpecs || defaultSpecs;	
+				var desiredBuildingDensity = specsObj.density;
+				var roadObj = specsObj.road || getRandomRoad();				
+					
+				$("#" + canvasID).parent().fadeOut(function(){
+					ctx.clear();
+					resizeCanvas(canvasID);					
+								
+					drawGrid(ctx, "below");					
+					var roadElement = drawRoad(ctx, cellsArr, roadObj);
+
+					for (var type in specsObj){
+						if (type == 'road' || type == 'density'){ continue; }
+						
+						var number = specsObj[type];
+						
+						for (var i = 0; i < number; i++){
+							if (type == 'large' || type == 'medium' || type == 'small'){
+								elementsArr = placeTerrain(ctx, cellsArr, elementsArr, TERRAIN_TYPE_BUILDINGS, type, desiredBuildingDensity);
+							}
+							else if (type == 'woods'){
+								elementsArr = placeTerrain(ctx, cellsArr, elementsArr, TERRAIN_TYPE_WOODS);
+							}
+							else if (type == 'hills'){
+								elementsArr = placeTerrain(ctx, cellsArr, elementsArr, TERRAIN_TYPE_HILLS);
+							}
+						}						
+					}
+					
+					drawGrid(ctx, "above");	
+					drawLabels(ctx, elementsArr);				
+
+					mapObj['roadElement'] = roadElement;
+					mapObj['elementsArr'] = elementsArr;
+				});
+				
+				$("#" + canvasID).parent().fadeIn();
+				$("#" + canvasID).disableTextSelect();
+				$("#" + canvasID).unbind("dblclick");
+				$("#" + canvasID).bind("dblclick", function(e){
+				    var cellX = Math.floor((e.pageX - this.offsetLeft)/UNIT_SIZE_PIXELS_X);
+				    var cellY = Math.floor((e.pageY - this.offsetTop)/UNIT_SIZE_PIXELS_Y);
+
+				    placeMarker(mapObj, cellX, cellY);
+				});
+				
+				return mapObj;
+			}
+			
+			var buildCoordsArray = function (){
+				var tempArr = [];
+				
+				for (var row = 0; row < UNIT_DIVISIONS_Y; row++){
+					for (var col = 0; col < UNIT_DIVISIONS_X; col++){
+						var point = { 'row': row, 'col': col };
+						
+						tempArr.push(point);
+					}
+				}
+				
+				return tempArr;
+			}
+			
+			var buildSelectionArray = function (numItems){
+				var tempArr = [];
+				
+				for (var i = 0; i < numItems; i++){
+					tempArr.push(i);
+				}
+				
+				return tempArr;	
+			}
+			
+			var placeTerrain = function (ctx, cellsArr, elementsArr, terrainType, subType, desiredDensity){
+				if (!ctx){ return; }
+				
+				var terrainList = TERRAIN_BUILDINGS_SMALL;
+				
+				if (terrainType == 	TERRAIN_TYPE_BUILDINGS){
+					if (subType == 'large'){ terrainList = TERRAIN_BUILDINGS_LARGE; }
+					else if (subType == 'medium'){ terrainList = TERRAIN_BUILDINGS_MEDIUM; }
+					else { terrainList = TERRAIN_BUILDINGS_SMALL; }						
+				}
+				else if (terrainType == TERRAIN_TYPE_WOODS){					
+					terrainList = TERRAIN_WOODS;
+				}
+				else if (terrainType == TERRAIN_TYPE_HILLS){					
+					terrainList = TERRAIN_HILLS;
+				}
+				
+				var numItems = terrainList.length;				
+				var cellX;
+				var cellY;
+				var allowed = false;
+				var attempt = 0;
+				var bestPlaceArr = [];
+				var cellsWide;
+				var cellsTall;				
+				var coordIndex;
+				var maxIterations = UNIT_DIVISIONS_X * UNIT_DIVISIONS_Y / 2;
+				var terrainSelectionArr = buildSelectionArray(numItems);
+				
+				while (!allowed && terrainSelectionArr.length > 0){
+					var index = Math.floor(Math.random() * terrainSelectionArr.length);
+					var terrainObj = terrainList[index];
+					var coordsArr = buildCoordsArray();
+					var tempObj = {};
+										
+					terrainSelectionArr.splice(index, 1);
+					
+					cellsWide = terrainObj.width;
+					cellsTall = terrainObj.height;
+					
+					while (!allowed && coordsArr.length > 0){					
+						coordIndex = Math.floor(Math.random() * coordsArr.length);
+						cellX = coordsArr[coordIndex].col;
+						cellY = coordsArr[coordIndex].row;
+						
+						allowed = checkPlacement(cellsArr, cellX, cellY, cellsWide, cellsTall, terrainType);
+										
+						if (allowed){
+							allowed = false;
+							
+							var adjacentRoads = countCoverage(cellsArr, cellX, cellY, cellsWide, cellsTall, TERRAIN_TYPE_ROADS, true);
+							var adjacentBuildings = countCoverage(cellsArr, cellX, cellY, cellsWide, cellsTall, TERRAIN_TYPE_BUILDINGS, true);
+							var weight = adjacentRoads * 4 + adjacentBuildings;
+							
+							tempObj = {
+								'terrainType': terrainType,
+								'cellX': cellX,
+								'cellY': cellY,
+								'cellsWide': cellsWide,
+								'cellsTall': cellsTall,
+								'weight': weight,
+								'coordIndex': coordIndex
+							};
+							
+							bestPlaceArr.push(tempObj);
+						}
+						
+						coordsArr.splice(coordIndex, 1);					
+							
+						attempt++;
+					}
+					
+					if (bestPlaceArr.length > 0) { allowed = true; }
+				}
+				
+				if (bestPlaceArr.length > 0){
+					allowed = true;
+					Utilities.sortOnKey(bestPlaceArr, 'weight', true);
+
+					var elementObj = bestPlaceArr[0];
+					
+					cellX = elementObj.cellX;
+					cellY = elementObj.cellY;
+					cellsWide = elementObj.cellsWide;
+					cellsTall = elementObj.cellsTall;
+					coordIndex = elementObj.coordIndex;
+					
+					elementsArr.push(elementObj);
+				}
+				
+				if (allowed){					
+					updateCells(cellsArr, cellX, cellY, cellsWide, cellsTall, terrainType);
+					drawTerrain(ctx, cellX, cellY, cellsWide, cellsTall, terrainType);	
+				}
+				
+				return elementsArr;
+			}
+			
+			var drawTerrain = function (ctx, cellX, cellY, cellsWide, cellsTall, terrainType){
+				ctx.openContainer(terrainType);
+				
+				if (terrainType == TERRAIN_TYPE_BUILDINGS){
+					drawRect(ctx, cellX, cellY, cellsWide, cellsTall, '#cccccc', '#aaaaaa');
+					drawRect(ctx, cellX, cellY, cellsWide, cellsTall, '#eeeeee', '#666666', Math.min(UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y)/5, true);
+				}
+				else if (terrainType == TERRAIN_TYPE_WOODS){ 
+					drawRect(ctx, cellX, cellY, cellsWide, cellsTall, '#99ff99', '#33cc33');
+					drawBubbles(ctx, cellX, cellY, cellsWide, cellsTall, '#339933', '#33cc33', Math.min(UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y)/4);
+				}
+				else if (terrainType == TERRAIN_TYPE_HILLS){ 
+					drawRect(ctx, cellX, cellY, cellsWide, cellsTall, '#ddccaa', '#ddaa00');
+					drawOval(ctx, cellX, cellY, cellsWide, cellsTall, '#ddaa00', '#cc9900', Math.min(UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y)/8);
+				}
+				
+				ctx.closeContainer();
+			}
+			
+			var drawRect = function (ctx, cellX, cellY, cellsWide, cellsTall, fillStyle, strokeStyle, borderWidth, bOffsetShadow){
+				var adjust = borderWidth || 0;
+
+				var fillColor = new jsColor(fillStyle || '#cccccc');
+				var shadowFillColor = new jsColor('#aaaaaa');
+				var penColor = new jsColor(strokeStyle || '#999999');
+				var pen = new jsPen(penColor, 1);
+				var point = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust, cellY * UNIT_SIZE_PIXELS_Y + adjust);
+				var width = cellsWide * UNIT_SIZE_PIXELS_X - adjust * 2;
+				var height = cellsTall * UNIT_SIZE_PIXELS_Y - adjust * 2;
+				
+				if (bOffsetShadow){
+					ctx.openContainer('building-shadow');
+					
+					for (var i = 0; i < 4; i++){
+						ctx.openContainer('building-shadow');
+						var dx = adjust * (5 - i)/5;
+						var dy = adjust * (5 - i)/5;
+						
+						var point0 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust, cellY * UNIT_SIZE_PIXELS_Y + adjust);
+						var point1 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust + width, cellY * UNIT_SIZE_PIXELS_Y + adjust);
+						var point2 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust + width + dx, cellY * UNIT_SIZE_PIXELS_Y + adjust + dy);
+						var point3 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust + width + dx, cellY * UNIT_SIZE_PIXELS_Y + adjust + height + dy);
+						var point4 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust + dx, cellY * UNIT_SIZE_PIXELS_Y + adjust + height + dy);
+						var point5 = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + adjust, cellY * UNIT_SIZE_PIXELS_Y + adjust + height);
+						
+						ctx.fillPolygon(shadowFillColor.getDarkerShade(i * 5), [point0, point1, point2, point3, point4, point5]);
+						ctx.closeContainer();
+					}
+					
+					
+					
+				}
+								
+				ctx.fillRectangle(fillColor, point, width, height);
+				ctx.drawRectangle(pen, point, width, height);
+			}
+			
+			var drawOval = function (ctx, cellX, cellY, cellsWide, cellsTall, fillStyle, strokeStyle, borderWidth){
+				var adjust = borderWidth || 0;
+				
+				var fillColor = new jsColor(fillStyle || '#cccccc');
+				var penColor = new jsColor(strokeStyle || '#999999');
+				var pen = new jsPen(penColor, 2);				
+
+				var point = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + (cellsWide * UNIT_SIZE_PIXELS_X/2), cellY * UNIT_SIZE_PIXELS_Y + (cellsTall * UNIT_SIZE_PIXELS_Y/2));
+				
+				ctx.fillEllipse(fillColor, point, cellsWide * UNIT_SIZE_PIXELS_X - adjust * 2, cellsTall * UNIT_SIZE_PIXELS_Y - adjust * 2);
+				ctx.drawEllipse(pen, point, cellsWide * UNIT_SIZE_PIXELS_X - adjust * 2, cellsTall * UNIT_SIZE_PIXELS_Y - adjust * 2);
+			}
+			
+			var drawBubbles = function (ctx, cellX, cellY, cellsWide, cellsTall, fillStyle, strokeStyle, borderWidth){
+				var adjust = borderWidth || 0;
+				var bubblesArr = [];
+				var fillColor = new jsColor(fillStyle || '#cccccc');
+				var highlightFillColor = fillColor.getLighterShade(48);
+				var shadowFillColor = new jsColor('#333333');
+				var penColor = new jsColor(strokeStyle || '#999999');
+				var pen = new jsPen(penColor, 1);				
+
+				
+				for (var i = 0; i < (cellsTall * cellsWide + 2) * 5; i++){
+					var radius = Math.floor(Math.random() * UNIT_SIZE_PIXELS_X/8 + 2);
+					var pointX = cellX * UNIT_SIZE_PIXELS_X + Math.floor(Math.random() * cellsWide * (UNIT_SIZE_PIXELS_X - radius)) + radius/2;
+					var pointY = cellY * UNIT_SIZE_PIXELS_Y + Math.floor(Math.random() * cellsTall * (UNIT_SIZE_PIXELS_Y - radius)) + radius/2;					
+					var point = new jsPoint(pointX, pointY);
+					
+					var tempObj = {
+						'radius': radius,
+						'point': point
+					};
+					
+					bubblesArr.push(tempObj);					
+				}				
+				
+				for (var i = 0; i < bubblesArr.length; i++){
+					var tempObj = bubblesArr[i];
+					var shadowPoint = new jsPoint(tempObj.point.x + 1, tempObj.point.y + 1);
+					var highlightPoint = new jsPoint(tempObj.point.x - 2, tempObj.point.y - 2);
+					
+					ctx.openContainer('single-tree');
+					ctx.fillCircle(shadowFillColor, shadowPoint, radius);
+					ctx.fillCircle(fillColor, tempObj.point, radius);
+					ctx.fillCircle(highlightFillColor, highlightPoint, radius - 2);
+					ctx.closeContainer();
+				}				
+			}
+			
+			var checkPlacement = function (cellsArr, cellX, cellY, cellsWide, cellsTall, terrainType){				
+				if ((cellX + cellsWide) > UNIT_DIVISIONS_X){ return false; }
+				if ((cellY + cellsTall) > UNIT_DIVISIONS_Y){ return false; }
+				
+				var coverageCount = countCoverage(cellsArr, cellX, cellY, cellsWide, cellsTall, TERRAIN_TYPE_ANY, false);
+				var isClear = (coverageCount == 0) ? true : false;
+				
+				return isClear;	
+			}
+			
+			var countCoverage = function (cellsArr, cellX, cellY, cellsWide, cellsTall, terrainType, bIsAdjacent){
+				var adjust = bIsAdjacent ? 1 : 0;
+				var top = cellY - adjust;
+				var bottom = cellY + cellsTall + adjust;
+				var left = cellX - adjust;
+				var right = cellX + cellsWide + adjust;
+				var touchCount = 0;	
+				
+				if (top < 0){ top = 0; }
+				if (left < 0){ left = 0; }
+				if (right > UNIT_DIVISIONS_X){ right = UNIT_DIVISIONS_X; }
+				if (bottom > UNIT_DIVISIONS_Y){ bottom = UNIT_DIVISIONS_Y; }
+				
+				for (var row = top; row < bottom; row++){
+					for (var col = left; col < right; col++){
+						if (terrainType == TERRAIN_TYPE_ANY){ if(cellsArr[row][col] != 0){ return 1; }} 
+						if (cellsArr[row][col] == terrainType){ touchCount++; }	
+					}
+				}
+				
+				return touchCount;
+			}	
+			
+			var updateCells = function (cellsArr, cellX, cellY, cellsWide, cellsTall, terrainType){			
+				for (var row = 0; row < cellsTall; row++){
+					for (var col = 0; col < cellsWide; col++){
+						var offsetX = col + cellX;
+						var offsetY = row + cellY;	
+
+						cellsArr[offsetY][offsetX] = terrainType;	
+					}
+				}
+			}
+			
+			var drawRoad = function (ctx, cellsArr, roadObj){
+				if (!ctx){ return; }
+				 
+				ctx.openContainer(TERRAIN_TYPE_ROADS);
+				
+				var bMinorRoad = roadObj.minorRoad;
+				var bNorth = roadObj.north; 
+				var bEast = roadObj.east; 
+				var bSouth = roadObj.south; 
+				var bWest = roadObj.west; 
+				
+				var roadX = Math.floor(UNIT_DIVISIONS_X * UNIT_SIZE_PIXELS_X/2);
+				var roadY = Math.floor(UNIT_DIVISIONS_Y * UNIT_SIZE_PIXELS_Y/2);
+				var minorAdjust = Math.min(UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y)/2;
+				var roadSize = bMinorRoad ? ROAD_WIDTH_PIXELS_MINOR : ROAD_WIDTH_PIXELS_MAJOR;
+				
+				var fillColor = new jsColor('#aa6666');
+				var penColor = new jsColor('#ffffff');
+				var pen = new jsPen(penColor, 1);
+				var eastWestBias = (bEast - bWest) * Math.floor(UNIT_DIVISIONS_X/4);
+				var southNorthBias = (bSouth - bNorth) * Math.floor(UNIT_DIVISIONS_X/4);
+				
+				var boardCenterX = Math.floor(UNIT_DIVISIONS_X/2 - ROAD_WIDTH_PIXELS_MINOR) + Math.floor(Math.random() * ROAD_WIDTH_PIXELS_MAJOR) - eastWestBias;
+				var boardCenterY = Math.floor(UNIT_DIVISIONS_Y/2 - ROAD_WIDTH_PIXELS_MINOR) + Math.floor(Math.random() * ROAD_WIDTH_PIXELS_MAJOR) - southNorthBias;
+				
+				if (boardCenterX < ROAD_WIDTH_PIXELS_MAJOR + 1){ boardCenterX = ROAD_WIDTH_PIXELS_MAJOR + 1; }
+				if (boardCenterY < ROAD_WIDTH_PIXELS_MAJOR + 1){ boardCenterY = ROAD_WIDTH_PIXELS_MAJOR + 1; }
+				if (boardCenterX > (UNIT_DIVISIONS_X - ROAD_WIDTH_PIXELS_MAJOR - 1)){ boardCenterX = UNIT_DIVISIONS_X - ROAD_WIDTH_PIXELS_MAJOR - 1; }
+				if (boardCenterY > (UNIT_DIVISIONS_Y - ROAD_WIDTH_PIXELS_MAJOR - 1)){ boardCenterY = UNIT_DIVISIONS_Y - ROAD_WIDTH_PIXELS_MAJOR - 1; }
+								
+				var roadLengthNorth = boardCenterY;
+				var roadLengthEast = UNIT_DIVISIONS_X - boardCenterX;
+				var roadLengthSouth = UNIT_DIVISIONS_Y - boardCenterY;
+				var roadLengthWest = boardCenterX;
+				var terrainType = TERRAIN_TYPE_ROADS;				
+				
+				if (bNorth){
+					var numCols = roadSize;
+					var numRows = roadLengthNorth;
+					var yOffset = 0;
+					var xOffset = boardCenterX;
+					
+					fillCells(ctx, cellsArr, fillColor, numRows, numCols, xOffset, yOffset, terrainType);					
+										
+					var imageFile = (bMinorRoad) ? IMAGE.ROAD_TWO_LANE_VERTICAL : IMAGE.ROAD_FOUR_LANE_VERTICAL;
+					for (var row = yOffset; row < (yOffset + numRows); row++){
+						var imagePoint = new jsPoint(xOffset * UNIT_SIZE_PIXELS_X, row * UNIT_SIZE_PIXELS_Y);
+						
+						ctx.drawImage(IMAGE_PATH + imageFile, imagePoint, UNIT_SIZE_PIXELS_X * roadSize, UNIT_SIZE_PIXELS_Y);
+					}					
+				}
+				
+				if (bWest) {
+					var numCols = roadLengthWest; 	
+					var numRows = roadSize;
+					var yOffset = boardCenterY;
+					var xOffset = 0;
+					
+					fillCells(ctx, cellsArr, fillColor, numRows, numCols, xOffset, yOffset, terrainType);
+					
+					var imageFile = (bMinorRoad) ? IMAGE.ROAD_TWO_LANE_HORIZONTAL : IMAGE.ROAD_FOUR_LANE_HORIZONTAL;
+					for (var col = xOffset; col < (xOffset + numCols); col++){
+						var imagePoint = new jsPoint(col * UNIT_SIZE_PIXELS_X, yOffset * UNIT_SIZE_PIXELS_Y);
+						
+						ctx.drawImage(IMAGE_PATH + imageFile, imagePoint, UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y * roadSize);
+					}	
+				}
+				
+				if (bSouth){ 
+					var numCols = roadSize;				
+					var numRows = roadLengthSouth;
+					var yOffset = boardCenterY;
+					var xOffset = boardCenterX;
+					
+					fillCells(ctx, cellsArr, fillColor, numRows, numCols, xOffset, yOffset, terrainType);
+					
+					var imageFile = (bMinorRoad) ? IMAGE.ROAD_TWO_LANE_VERTICAL : IMAGE.ROAD_FOUR_LANE_VERTICAL;
+					for (var row = yOffset; row < (yOffset + numRows); row++){
+						var imagePoint = new jsPoint(xOffset * UNIT_SIZE_PIXELS_X, row * UNIT_SIZE_PIXELS_Y);
+						
+						ctx.drawImage(IMAGE_PATH + imageFile, imagePoint, UNIT_SIZE_PIXELS_X * roadSize, UNIT_SIZE_PIXELS_Y);
+					}
+				}
+				
+				if (bEast) { 					
+					var numCols = roadLengthEast; 	
+					var numRows = roadSize;
+					var yOffset = boardCenterY;
+					var xOffset = boardCenterX;					
+
+					fillCells(ctx, cellsArr, fillColor, numRows, numCols, xOffset, yOffset, terrainType);
+					
+					var imageFile = (bMinorRoad) ? IMAGE.ROAD_TWO_LANE_HORIZONTAL : IMAGE.ROAD_FOUR_LANE_HORIZONTAL;
+					for (var col = xOffset; col < (xOffset + numCols); col++){
+						var imagePoint = new jsPoint(col * UNIT_SIZE_PIXELS_X, yOffset * UNIT_SIZE_PIXELS_Y);
+						
+						ctx.drawImage(IMAGE_PATH + imageFile, imagePoint, UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y * roadSize);
+					}	
+				}
+				
+				var numCols = roadSize;
+				var numRows = roadSize;
+				var yOffset = boardCenterY;
+				var xOffset = boardCenterX;
+				
+				var imageFile = (bMinorRoad) ? IMAGE.INTERSECTION_TWO_LANE : IMAGE.INTERSECTION_FOUR_LANE;
+				var imagePoint = new jsPoint(xOffset * UNIT_SIZE_PIXELS_X,yOffset * UNIT_SIZE_PIXELS_Y);
+				
+				fillCells(ctx, cellsArr, fillColor, numRows, numCols, xOffset, yOffset, terrainType);				
+				ctx.drawImage(IMAGE_PATH + imageFile, imagePoint, UNIT_SIZE_PIXELS_X * roadSize, UNIT_SIZE_PIXELS_Y * roadSize);
+				
+				var roadElement = {
+					'roadObj': roadObj,
+					'centerX': boardCenterX,
+					'centerY': boardCenterY					
+				};
+				
+				ctx.closeContainer();
+				
+				return roadElement;
+			}
+			
+			var fillCells = function(ctx, cellsArr, fillColor, numRows, numCols, cellsXOffset, cellsYOffset, terrainType){
+				for (var row = 0; row < numRows; row++){
+					for (var col = 0; col < numCols; col++){
+						var cellX = cellsXOffset + col;
+						var cellY = cellsYOffset + row;				
+						var point = new jsPoint(cellX * UNIT_SIZE_PIXELS_X, cellY * UNIT_SIZE_PIXELS_Y);
+
+						ctx.fillRectangle(fillColor, point, UNIT_SIZE_PIXELS_X, UNIT_SIZE_PIXELS_Y);
+						updateCells(cellsArr, cellX, cellY, 1, 1, terrainType);
+					}
+				}	
+			}
+			
+			var drawLabels = function (ctx, elementsArr){
+				var alpha = 97;
+				var number = 1;
+				
+				for (var i = 0; i < elementsArr.length; i++){
+					var elementObj = elementsArr[i];
+					var terrainType = elementObj.terrainType;
+					var cellX = elementObj.cellX;
+					var cellY = elementObj.cellY;
+					var cellsWide = elementObj.cellsWide;
+					var cellsTall = elementObj.cellsTall;
+					
+					var midpointX = cellX + cellsWide/2;
+					var midpointY = cellY + cellsTall/2;
+					var point = new jsPoint(midpointX * UNIT_SIZE_PIXELS_X - 1, midpointY * UNIT_SIZE_PIXELS_Y - 1);
+					var pointShadow = new jsPoint(midpointX * UNIT_SIZE_PIXELS_X - 1, midpointY * UNIT_SIZE_PIXELS_Y + 1);
+					var halfSize = Math.min(UNIT_SIZE_PIXELS_X * 0.7, 14);
+					var font = new jsFont('Arial, Helvetica, Sans-serif', 'bold', halfSize + 'px');
+					var textPoint = new jsPoint(midpointX * UNIT_SIZE_PIXELS_X - halfSize/2, midpointY * UNIT_SIZE_PIXELS_Y - halfSize/2);
+					var fillColor = (terrainType == TERRAIN_TYPE_BUILDINGS) ? new jsColor("#ffffff") : new jsColor("#333333");
+					var shadowFillColor = (terrainType == TERRAIN_TYPE_BUILDINGS) ? new jsColor("#cccccc") : new jsColor("#666666");
+					var fontColor = (terrainType == TERRAIN_TYPE_BUILDINGS) ? new jsColor("#000000") : new jsColor("#ffffff");
+					var label = (terrainType == TERRAIN_TYPE_BUILDINGS) ? "" + number++ : String.fromCharCode(alpha++);
+
+					ctx.openContainer('label');
+					ctx.fillCircle(shadowFillColor, pointShadow, halfSize/2);
+					ctx.fillCircle(fillColor, point, halfSize/2);				    
+					ctx.drawText(label, textPoint, font, fontColor, halfSize, 'center');
+					ctx.closeContainer();
+				}				
+			}
+			
+			var drawMarker = function (ctx, cellX, cellY, index){
+				var alpha = 65;
+				var halfSize = Math.min(UNIT_SIZE_PIXELS_X * 0.7, 14);
+				var margin = halfSize/6;
+				var point = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + margin, cellY * UNIT_SIZE_PIXELS_Y + margin);
+				var fillPoint = new jsPoint(cellX * UNIT_SIZE_PIXELS_X + margin + 1, cellY * UNIT_SIZE_PIXELS_Y + margin + 1);
+				var fillColor = new jsColor("#ffff33");
+				var penColor = new jsColor("#ff0000");
+				var fontColor = new jsColor("#000000");
+				var pen = new jsPen(penColor, 1);
+				var font = new jsFont('Arial, Helvetica, Sans-serif', 'bold', halfSize + 'px');
+				var textPoint = new jsPoint(fillPoint.x, fillPoint.y);				
+				var label = String.fromCharCode(alpha + index);
+				
+				var containerDiv = ctx.openContainer('marker');
+				var borderDiv = ctx.drawRectangle(pen, point, halfSize + 2, halfSize + 2);
+				var fillDiv = ctx.fillRectangle(fillColor, fillPoint, halfSize, halfSize);
+				var textDiv = ctx.drawText(label, textPoint, font, fontColor, halfSize, 'center');
+				
+				ctx.closeContainer();
+								
+				var markerObj = {
+					'cellX': cellX,
+					'cellY': cellY			
+				};
+				
+				return markerObj;
+			}
+			
+			var computeDensity = function (cellsArr, densityObj, terrainKeys){
+				var totalArea = UNIT_DIVISIONS_X * UNIT_DIVISIONS_Y;
+				var totalTerrain = 0;
+				
+				if (! terrainKeys instanceof Array){ terrainKeys = new Array(terrainKeys); }
+				
+				for (var i = 0; i < terrainKeys.length; i++){
+					var terrainType = terrainKeys[i];
+					
+					if (densityObj[terrainType] > 0){ totalTerrain += densityObj[terrainType]; }
+				}
+				
+				return (totalTerrain/totalArea);
+			}
+			
+			var showHideSubgrid = function(){
+				var gridBelow = $("#displayGridBelow").is(":checked");
+				var maingrid = gridBelow ? "#maingrid-below" : "#maingrid-above";
+				var subgrid = gridBelow ? "#subgrid-below" : "#subgrid-above";
+				
+				$(".grid").addClass("hidden");
+				
+				if($("#displaySubgrid").is(":checked")) { $(subgrid).removeClass("hidden"); }
+
+				$(maingrid).removeClass("hidden");
+			}	
+			
+		</script>
+		<style>
+			.map-canvas-border {
+				border: 2px solid #cccccc;
+				height: 201px;
+				width: 201px;				
+			}
+			
+			.map-canvas {
+				border: 1px solid #000000;
+				height: 200px;
+				width: 200px;
+				overflow: hidden;
+				position: relative;
+				cursor: pointer;
+			}
+			
+			.grid, .building-shadow {
+				filter:alpha(opacity=50);
+				-moz-opacity:0.5;
+				-khtml-opacity: 0.5;
+				opacity: 0.5;
+			}
+		</style>
+	</head>	
+	<body>
+		<a name="top"></a>
+		<div class="info">
+			<h1>Map Generator</h1>
+			<p>			
+				<label for='cellsWide'>Map dimensions</label>
+				<br/><input type='text' name='cellsWide' id='cellsWide' value='8' class='tinyText' title='Enter how many cells wide the map will be'> <input type='text' name='cellsTall'  id='cellsTall' value='8' class='tinyText' title='Enter how many cells tall the map will be'>
+				<br/><span class='exampleText'>Assuming that one cell is 6" wide; standard board lengths are 6, 8, 10, and 12.  For example a 4'x4' board is 8x8 and a 3'x6' board is 6x12.</span>	
+				<br/>
+				<br/><label for='pixelsWide'>Cell size</label>
+				<br/><input type='text' name='pixelsWide' id='pixelsWide' value='24' class='tinyText' title='Enter how wide each cell will be in pixels'> <input type='text' name='pixelsTall' id='pixelsTall' value='24' class='tinyText' title='Enter how tall each cell will be in pixels'>
+				<input type='checkbox' name='displayGridBelow' id='displayGridBelow' onclick='showHideSubgrid();' title='Click to have all grids below artwork'/>&nbsp;Show grids beneath
+				<br/><span class='exampleText'>Cell size needs to be a multiple of sub-grid in order for both to properly align</span>
+				<br/>
+				<br/><label for='pixelsWide'>Subgrid</label>
+				<br/><input type='text' name='subgridSize' id='subgridSize' value='6' class='tinyText' title='Size of subgrid'>
+				<input type='checkbox' name='displaySubgrid' id='displaySubgrid' onclick='showHideSubgrid();' title='Click to display the sub-grid'/>&nbsp;Show sub-grid
+				<br/><span class='exampleText'>Sub-grid needs to be a common factor of the Cell size or it will not align
+				<br/>				
+				<br/><label for='minorRoadWidth'>Road widths</label>
+				<br/><input type='text' name='minorRoadWidth' id='minorRoadWidth' value='1' class='tinyText' title='Enter the width in cells for a minor road'> <input type='text' name='majorRoadWidth' id='majorRoadWidth' value='2' class='tinyText' title='Enter the width in cells for a major road'>
+				<br/><span class='exampleText'>Assuming that one cell is 6" wide at 25MM; use 2</span>
+				<br/>
+				<br/><input type='button' id='clickme' onclick='drawMap("canvas")' value='Draw ATZ Map' title='Click to draw a rectangle with Canvas'/>		
+			</p>
+			<br/>
+			<div id='outputArea'>
+				<div class='map-canvas-border'>
+					<div id="canvas" class='map-canvas'></div>
+				</div>
+			</div>
+		</div>
+		<a name="bottom"></a>
+		<div class="links">
+			Back to <a href='../index.html' title='Click to go to Home directory'>Home</a> page.
+		</div>
+		<div id='modalArea'></div>
+	</body>
+</html>

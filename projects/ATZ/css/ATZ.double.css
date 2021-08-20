@@ -1,231 +1,238 @@
 /**
  * DOUBLE SIZE
  **/
-.atz-tall-double .labels,
-.atz-wide-double .labels {
-	font-family: Verdana, Tahoma, Helvetica, Sans-Serif;
-	font-size: 22px;
+
+.atz-tall-double .labels, .atz-wide-double .labels {
+    font-family: Verdana, Tahoma, Helvetica, Sans-Serif;
+    font-size: 22px;
 }
+
 
 /** 
  * DOUBLE icons
  **/
+
 img.gender-boy-double {
-	position: absolute;
-	height: 32pt;
-	width: 64pt;
-	clip: rect(0px, 80px, 48px, 36px);
-	left: -24px;
+    position: absolute;
+    height: 32pt;
+    width: 64pt;
+    clip: rect(0px, 80px, 48px, 36px);
+    left: -24px;
 }
 
 img.gender-girl-double {
-	position: absolute;
-	height: 32pt;
-	width: 64pt;
-	clip: rect(0px, 36px, 48px, 0px);	
+    position: absolute;
+    height: 32pt;
+    width: 64pt;
+    clip: rect(0px, 36px, 48px, 0px);
 }
+
 
 /**
  * DOUBLE TALL mode
  * positions the various elements on the tall sample card
  **/
- 
+
 .atz-tall-double .fullname {
-	display: none;
-	visibility: hidden;
-	line-height: 0px;
+    display: none;
+    visibility: hidden;
+    line-height: 0px;
 }
 
 .atz-tall-double .abbrname {
-	top: 20px;
-	left: 30px;	
-	width: 320px;
-	height: 54px;
-	font-size: 44px;
-	font-family: Crack Babies, Arial, Sans-serif;
+    top: 20px;
+    left: 30px;
+    width: 320px;
+    height: 54px;
+    font-size: 44px;
+    font-family: 'Crack Babies', 'Metal Mania', Arial, Sans-serif;
 }
 
 .atz-tall-double .type {
-	top: 20px;
-	left: 30px;	
-	width: 180px;
-	height: 40px;
-	color: white;
-	font-size: 32px;
-	font-weight: bold;
+    top: 20px;
+    left: 30px;
+    width: 180px;
+    height: 40px;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
 }
 
 .atz-tall-double .gender {
-	top: -20px;
-	left: 160px;	
-	width: 40px;
-	height: 44px;
-	font-size: 36px;
-	font-weight: bold;
-	color: white;
-	text-align: center;
+    top: -20px;
+    left: 160px;
+    width: 40px;
+    height: 44px;
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
 }
 
 .atz-tall-double .quality {
-	top: -50px;
-	left: 220px;	
-	width: 160px;
-	height: 40px;
-	color: white;
+    top: -50px;
+    left: 220px;
+    width: 160px;
+    height: 40px;
+    color: white;
 }
 
 .atz-tall-double .attributes {
-	top: -30px;
-	left: 30px;	
-	width: 400px;
-	height: 60px;
-	line-height: 24px;
+    top: -30px;
+    left: 30px;
+    width: 400px;
+    height: 60px;
+    line-height: 24px;
 }
 
 .atz-tall-double .weapons {
-	top: 0px;
-	left: 40px;	
-	width: 400px;
-	height: 160px;
-	font-size: 18px;
-	padding-left: 2px;
-	line-height: 24px;
+    top: 0px;
+    left: 40px;
+    width: 400px;
+    height: 160px;
+    font-size: 18px;
+    padding-left: 2px;
+    line-height: 24px;
 }
 
 .atz-tall-double .notes {
-	top: 100px;
-	left: 40px;	
-	width: 400px;
-	height: 160px;
-	font-size: 18px;
-	padding-left: 2px;
-	line-height: 24px;
+    top: 100px;
+    left: 40px;
+    width: 400px;
+    height: 160px;
+    font-size: 18px;
+    padding-left: 2px;
+    line-height: 24px;
 }
 
 .atz-tall-double .rep {
-	top: -515px;
-	left: 376px;	
-	width: 80px;
-	font-size: 48px;
-	font-weight: bold;
-	text-align: center;
+    top: -515px;
+    left: 376px;
+    width: 80px;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
 }
+
 
 /**
  * DOUBLE WIDE mode
  * positions the various elements on the wide sample card
  **/
+
 .atz-wide-double .fullname {
-	top: 20px;
-	left: 30px;	
-	width: 520px;
-	height: 54px;
-	font-size: 44px;
-	font-family: Crack Babies, Arial, Sans-serif;
+    top: 20px;
+    left: 30px;
+    width: 520px;
+    height: 54px;
+    font-size: 44px;
+    font-family: 'Crack Babies', 'Metal Mania', Arial, Sans-serif;
 }
 
 .atz-wide-double .abbrname {
-	display: none;
-	visibility: hidden;
-	line-height: 0px;
+    display: none;
+    visibility: hidden;
+    line-height: 0px;
 }
 
 .atz-wide-double .type {
-	top: 24px;
-	left: 30px;	
-	width: 320px;
-	height: 40px;
-	color: white;
-	font-size: 32px;
-	font-weight: bold;
+    top: 24px;
+    left: 30px;
+    width: 320px;
+    height: 40px;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
 }
 
 .atz-wide-double .gender {
-	top: -20px;
-	left: 350px;	
-	width: 40px;
-	height: 44px;
-	font-size: 36px;
-	font-weight: bold;
-	color: white;
-	text-align: center;
+    top: -20px;
+    left: 350px;
+    width: 40px;
+    height: 44px;
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
 }
 
 .atz-wide-double .quality {
-	top: -50px;
-	left: 410px;	
-	width: 160px;
-	height: 40px;
-	color: white;
+    top: -50px;
+    left: 410px;
+    width: 160px;
+    height: 40px;
+    color: white;
 }
 
 .atz-wide-double .attributes {
-	top: -30px;
-	left: 30px;	
-	width: 600px;
-	height: 60px;
-	line-height: 24px;
+    top: -30px;
+    left: 30px;
+    width: 600px;
+    height: 60px;
+    line-height: 24px;
 }
 
 .atz-wide-double .weapons {
-	top: 10px;
-	left: 40px;	
-	width: 600px;
-	height: 160px;
-	font-size: 18px;
-	padding-left: 2px;
-	line-height: 24px;
+    top: 10px;
+    left: 40px;
+    width: 600px;
+    height: 160px;
+    font-size: 18px;
+    padding-left: 2px;
+    line-height: 24px;
 }
 
 .atz-wide-double .notes {
-	top: -45px;
-	left: 40px;	
-	width: 600px;
-	height: 100px;
-	font-size: 18px;
-	padding-left: 2px;
-	line-height: 24px;
+    top: -45px;
+    left: 40px;
+    width: 600px;
+    height: 100px;
+    font-size: 18px;
+    padding-left: 2px;
+    line-height: 24px;
 }
 
 .atz-wide-double .rep {
-	top: -450px;
-	left: 566px;	
-	width: 80px;
-	height: 50px;
-	font-size: 48px;
-	font-weight: bold;
-	text-align: center;
+    top: -450px;
+    left: 566px;
+    width: 80px;
+    height: 50px;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
 }
+
 
 /**
  * DOUBLE IN-LINE Table presentation
  **/
+
 .atz-wide-double table.small {
-	width: 590px;	
+    width: 590px;
 }
 
 .atz-tall-double table.small {
-	width: 400px;	
+    width: 400px;
 }
 
 .atz-tall-double .left-150 {
-	width: 200px;
-	overflow: hidden;	
+    width: 200px;
+    overflow: hidden;
 }
 
 .double table.small th {
-	font-size: 18px;
-	color: white;
-	padding: 4px;
-	padding-left: 10px;
-	border: 2px solid #333333;
-	background-color: #333333;
-	border-bottom: none;	
+    font-size: 18px;
+    color: white;
+    padding: 4px;
+    padding-left: 10px;
+    border: 2px solid #333333;
+    background-color: #333333;
+    border-bottom: none;
 }
 
 .double table.small td {
-	font-size: 18px;
-	padding: 4px;
-	border: 2px solid #cccccc;
-	border-top: none;
+    font-size: 18px;
+    padding: 4px;
+    border: 2px solid #cccccc;
+    border-top: none;
 }
